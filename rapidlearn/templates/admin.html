@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard | JovilRapidLearn</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+display:flex;
+background:#f4f7fb;
+}
+
+.sidebar{
+width:230px;
+background:#0a2540;
+height:100vh;
+color:white;
+padding:25px;
+}
+
+.sidebar h2{
+margin-bottom:40px;
+}
+
+.sidebar a{
+display:block;
+color:white;
+text-decoration:none;
+margin-bottom:20px;
+}
+
+.sidebar a:hover{
+color:#4fd1c5;
+}
+
+.main{
+flex:1;
+padding:40px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+margin-bottom:30px;
+}
+
+input,textarea,select{
+width:100%;
+padding:10px;
+margin-top:10px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+border:none;
+padding:10px 16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.add-btn{
+background:#0a2540;
+color:white;
+}
+
+.delete{
+background:#ef4444;
+color:white;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th{
+background:#0a2540;
+color:white;
+padding:12px;
+}
+
+td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid #eee;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+gap:16px;
+margin-top:18px;
+}
+
+.stat{
+background:linear-gradient(135deg,#6366f1,#4f46e5);
+color:white;
+border-radius:10px;
+padding:18px 18px;
+}
+.stat .num{font-size:26px;font-weight:600;line-height:1.1;}
+.stat .label{opacity:.9;font-size:13px;margin-top:6px;}
+.grid2{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:16px;
+}
+.muted{color:#64748b;font-size:14px;}
+.table-wrap{overflow:auto;}
+.pill{
+display:inline-block;
+padding:4px 10px;
+border-radius:999px;
+font-size:12px;
+font-weight:500;
+background:#eef2ff;
+color:#4f46e5;
+}
+.progress-wrap{
+width:120px;
+height:20px;
+background:#e2e8f0;
+border-radius:999px;
+overflow:hidden;
+display:inline-block;
+vertical-align:middle;
+margin-right:8px;
+}
+.progress-bar{
+height:100%;
+background:linear-gradient(90deg,#10b981,#059669);
+border-radius:999px;
+transition:width .3s ease;
+}
+.progress-bar.warn{background:linear-gradient(90deg,#f59e0b,#d97706);}
+.progress-bar.danger{background:linear-gradient(90deg,#ef4444,#dc2626);}
+.chart-wrap{max-width:500px;height:280px;margin-top:16px;}
+
+@media(max-width:900px){
+  .grid2{grid-template-columns:1fr;}
+  .sidebar{height:auto;}
+  body{display:block;}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2>JovilRapidLearn</h2>
+
+<a href="/admin">Dashboard</a>
+<a href="/admin?view=courses">Courses</a>
+<a href="/admin?view=lessons">Lessons</a>
+<a href="/admin?view=quiz">Quiz</a>
+<a href="/admin?view=students">Students</a>
+<a href="/admin?view=progress">Student Progress</a>
+<a href="/logout">Logout</a>
+
+</div>
+
+<div class="main">
+
+<!-- DASHBOARD -->
+
+{% if view == None %}
+
+<div class="card">
+
+<h2>Admin Dashboard</h2>
+
+<p style="margin-top:10px;" class="muted">Welcome Admin 👋</p>
+
+<div class="stats">
+  <div class="stat">
+    <div class="num">{{courses|length}}</div>
+    <div class="label">Total Courses</div>
+  </div>
+  <div class="stat">
+    <div class="num">{{lessons|length}}</div>
+    <div class="label">Total Lessons</div>
+  </div>
+  <div class="stat">
+    <div class="num">{{users|length}}</div>
+    <div class="label">Registered Students</div>
+  </div>
+  <div class="stat">
+    <div class="num">{{total_enrollments}}</div>
+    <div class="label">Total Enrollments</div>
+  </div>
+  <div class="stat">
+    <div class="num">{{total_completions}}</div>
+    <div class="label">Lesson Completions</div>
+  </div>
+</div>
+
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h2>Recent Enrollments</h2>
+    <p class="muted" style="margin-top:-10px;margin-bottom:16px;">Latest 10 course enrollments</p>
+    <div class="table-wrap">
+      <table>
+        <tr>
+          <th>Time</th>
+          <th>Student</th>
+          <th>Email</th>
+          <th>Course</th>
+        </tr>
+        {% for r in recent_enrollments %}
+        <tr>
+          <td>{{ r[0] }}</td>
+          <td>{{ r[1] }}</td>
+          <td>{{ r[2] }}</td>
+          <td><span class="pill">{{ r[3] }}</span></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Recent Completions</h2>
+    <p class="muted" style="margin-top:-10px;margin-bottom:16px;">Latest 10 completed lessons</p>
+    <div class="table-wrap">
+      <table>
+        <tr>
+          <th>Time</th>
+          <th>Student</th>
+          <th>Course</th>
+          <th>Lesson</th>
+        </tr>
+        {% for r in recent_completions %}
+        <tr>
+          <td>{{ r[0] }}</td>
+          <td>{{ r[1] }}</td>
+          <td><span class="pill">{{ r[2] }}</span></td>
+          <td>{{ r[3] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Top Courses (by enrollments)</h2>
+  <p class="muted" style="margin-top:-10px;margin-bottom:16px;">Courses ordered by number of enrollments</p>
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Course</th>
+        <th>Enrollments</th>
+      </tr>
+      {% for c in top_courses %}
+      <tr>
+        <td style="text-align:left;">{{ c[1] }}</td>
+        <td>{{ c[2] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+{% endif %}
+
+<!-- COURSES -->
+
+{% if view == "courses" %}
+
+<div class="card">
+
+<h2>Add Course</h2>
+
+<form action="/addcourse" method="POST">
+
+<input type="text" name="course" placeholder="Course Name" required>
+
+<textarea name="description" placeholder="Course Description" required></textarea>
+
+<button class="add-btn">Add Course</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>Manage Courses</h2>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Course</th>
+<th>Description</th>
+<th>Delete</th>
+</tr>
+
+{% for course in courses %}
+
+<tr>
+
+<td>{{course[0]}}</td>
+<td>{{course[1]}}</td>
+<td>{{course[2]}}</td>
+
+<td>
+
+<a href="/delete/{{course[0]}}">
+<button class="delete">Delete</button>
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endif %}
+
+<!-- LESSONS -->
+
+{% if view == "lessons" %}
+
+<div class="card">
+
+<h2>Add Lesson</h2>
+
+<form action="/addlesson" method="POST">
+
+<select name="course_id">
+
+{% for course in courses %}
+
+<option value="{{course[0]}}">{{course[1]}}</option>
+
+{% endfor %}
+
+</select>
+
+<input type="text" name="title" placeholder="Lesson Title" required>
+
+<textarea name="content" placeholder="Lesson Content"></textarea>
+
+<input type="url" name="video_url" placeholder="Video URL (optional - YouTube/Vimeo)">
+
+<input type="url" name="audio_url" placeholder="Audio URL (optional - MP3 link)">
+
+<button class="add-btn">Add Lesson</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>Manage Lessons</h2>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Course ID</th>
+<th>Title</th>
+<th>Delete</th>
+</tr>
+
+{% for lesson in lessons %}
+
+<tr>
+
+<td>{{lesson[0]}}</td>
+<td>{{lesson[1]}}</td>
+<td>{{lesson[2]}}</td>
+
+<td>
+
+<a href="/deletelesson/{{lesson[0]}}">
+<button class="delete">Delete</button>
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endif %}
+
+<!-- QUIZ -->
+
+{% if view == "quiz" %}
+
+<div class="card">
+
+<h2>Add Quiz</h2>
+
+<form action="/addquiz" method="POST">
+
+<input type="number" name="lesson_id" placeholder="Lesson ID" required>
+
+<textarea name="question" placeholder="Quiz Question" required></textarea>
+
+<input type="text" name="option1" placeholder="Option 1" required>
+<input type="text" name="option2" placeholder="Option 2" required>
+<input type="text" name="option3" placeholder="Option 3" required>
+<input type="text" name="option4" placeholder="Option 4" required>
+
+<input type="text" name="answer" placeholder="Correct Answer" required>
+
+<button class="add-btn">Add Quiz</button>
+
+</form>
+
+</div>
+
+{% endif %}
+
+<!-- STUDENTS -->
+
+{% if view == "students" %}
+
+<div class="card">
+
+<h2>Registered Students</h2>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+</tr>
+
+{% for user in users %}
+
+<tr>
+
+<td>{{user[0]}}</td>
+<td>{{user[1]}}</td>
+<td>{{user[2]}}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endif %}
+
+<!-- STUDENT PROGRESS -->
+
+{% if view == "progress" %}
+
+<div class="card">
+  <h2>Course Progress Overview (Chart)</h2>
+  <p class="muted" style="margin-top:-10px;">Average completion % per course (enrolled students)</p>
+  <div class="chart-wrap">
+    <canvas id="progressChart"></canvas>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Student Progress Tracking</h2>
+  <p class="muted" style="margin-top:-10px;margin-bottom:16px;">Each student's lesson completion with percentage bar and final quiz status</p>
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Student</th>
+        <th>Email</th>
+        <th>Course</th>
+        <th>Lessons</th>
+        <th>Progress</th>
+        <th>Final Quiz</th>
+      </tr>
+      {% for r in student_progress %}
+      {% set pct = ((r[5] or 0) * 100 / r[6]) | int if r[6] and r[6] > 0 else 0 %}
+      <tr>
+        <td style="text-align:left;">{{ r[1] }}</td>
+        <td style="text-align:left;">{{ r[2] }}</td>
+        <td><span class="pill">{{ r[4] }}</span></td>
+        <td>{{ r[5] }} / {{ r[6] }}</td>
+        <td>
+          {% if r[6] and r[6] > 0 %}
+          <div class="progress-wrap">
+            <div class="progress-bar {% if pct < 25 %}danger{% elif pct < 50 %}warn{% endif %}" style="width:{{ pct }}%"></div>
+          </div>
+          <strong>{{ pct }}%</strong>
+          {% else %}
+          -
+          {% endif %}
+        </td>
+        <td>
+          {% if r[7] == 1 %}
+            <span style="color:#10b981;font-weight:600;">Passed</span>
+          {% elif r[7] == 0 %}
+            <span style="color:#ef4444;">Failed</span>
+          {% else %}
+            <span class="muted">Not attempted</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="muted" style="padding:24px;">No enrollments yet. Students will appear here when they enroll in courses.</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function(){
+  const chartData = {{ course_progress_chart | tojson }};
+  if (chartData.length === 0) return;
+  const ctx = document.getElementById('progressChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chartData.map(d => d[0]),
+      datasets: [{
+        label: 'Avg progress %',
+        data: chartData.map(d => d[1]),
+        backgroundColor: 'rgba(99, 102, 241, 0.6)',
+        borderColor: 'rgb(79, 70, 229)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, max: 100 },
+        x: { ticks: { maxRotation: 45 } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: t => t.raw + '%' } }
+      }
+    }
+  });
+})();
+</script>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

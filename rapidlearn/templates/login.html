@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Register - JovilRapidLearn</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0a2540,#1e3c72);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+background:white;
+width:400px;
+padding:40px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.container h2{
+text-align:center;
+margin-bottom:20px;
+color:#0a2540;
+}
+
+.input-group{
+margin-bottom:15px;
+}
+
+.input-group label{
+font-size:14px;
+display:block;
+margin-bottom:5px;
+}
+
+.input-group input{
+width:100%;
+padding:10px;
+border-radius:6px;
+border:1px solid #ccc;
+outline:none;
+}
+
+button{
+width:100%;
+padding:10px;
+border:none;
+border-radius:6px;
+background:#0a2540;
+color:white;
+font-size:15px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+background:#1e3c72;
+}
+
+.switch{
+text-align:center;
+margin-top:15px;
+font-size:14px;
+}
+
+.switch span{
+color:#0a2540;
+font-weight:500;
+cursor:pointer;
+}
+
+#registerForm{
+display:none;
+}
+
+.logo{
+text-align:center;
+font-size:22px;
+font-weight:600;
+color:#0a2540;
+margin-bottom:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo"><h2>JovilRapidLearn</h2></div>
+<hr>
+<br>
+<!-- LOGIN FORM -->
+<form id="loginForm" action="/logincheck" method="POST">
+<h2>Login</h2>
+
+<div class="input-group">
+<label>Email</label>
+<input type="email" name="email" placeholder="Enter email" required>
+</div>
+
+<div class="input-group">
+<label>Password</label>
+<input type="password" name="password" placeholder="Enter password" required>
+</div>
+
+<button type="submit">Login</button>
+
+<div class="switch">
+Don't have an account? 
+<span onclick="showRegister()">Register</span>
+</div>
+
+</form>
+
+
+<!-- REGISTER FORM -->
+<form id="registerForm" action="/register" method="POST">
+
+<h2>Register</h2>
+
+<div class="input-group">
+<label>Full Name</label>
+<input type="text" name="name" placeholder="Enter name" required>
+</div>
+
+<div class="input-group">
+<label>Email</label>
+<input type="email" name="email" placeholder="Enter email" required>
+</div>
+
+<div class="input-group">
+<label>Password</label>
+<input type="password" name="password" placeholder="Create password" required>
+</div>
+
+<button type="submit">Create Account</button>
+
+<div class="switch">
+Already have an account? 
+<span onclick="showLogin()">Login</span>
+</div>
+
+</form>
+
+</div>
+
+
+<script>
+
+function showRegister(){
+document.getElementById("loginForm").style.display="none";
+document.getElementById("registerForm").style.display="block";
+}
+
+function showLogin(){
+document.getElementById("registerForm").style.display="none";
+document.getElementById("loginForm").style.display="block";
+}
+
+</script>
+
+</body>
+</html>

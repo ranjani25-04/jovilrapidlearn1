@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Portal | JovilRapidLearn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --nav:#0f172a;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --primary:#6366f1;
+      --primary-dark:#4f46e5;
+      --success:#10b981;
+      --danger:#ef4444;
+      --shadow: 0 10px 30px rgba(2,6,23,.08);
+      --radius:16px;
+      --radius-sm:12px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+    body{display:flex;min-height:100vh;background:var(--bg);color:var(--text);}
+    a{text-decoration:none;color:inherit;}
+    .sidebar{
+      width:260px;flex-shrink:0;background:var(--nav);color:#fff;padding:22px 0;
+      position:sticky;top:0;height:100vh;
+    }
+    .brand{padding:0 22px 18px;font-weight:800;letter-spacing:-.03em;font-size:1.15rem;border-bottom:1px solid rgba(255,255,255,.08);}
+    .nav{padding:14px 10px;}
+    .nav a{
+      display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;margin:6px 10px;
+      color:rgba(255,255,255,.88);font-weight:600;font-size:.95rem;
+    }
+    .nav a:hover{background:rgba(165,180,252,.12);color:#a5b4fc;}
+    .nav a.active{background:rgba(165,180,252,.18);color:#a5b4fc;}
+    .main{flex:1;min-width:0;padding:28px 34px 50px;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+    .topbar h1{font-size:1.35rem;font-weight:800;letter-spacing:-.02em;}
+    .sub{color:var(--muted);font-size:.95rem;margin-top:4px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:18px;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+    .course-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;}
+    .badge{display:inline-block;background:rgba(99,102,241,.12);color:var(--primary);font-weight:700;font-size:.75rem;padding:5px 10px;border-radius:999px;margin-bottom:10px;}
+    .course-card h3{font-size:1.05rem;font-weight:800;margin-bottom:8px;letter-spacing:-.01em;}
+    .course-card p{color:var(--muted);font-size:.92rem;line-height:1.55;margin-bottom:12px;}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .meta{color:var(--muted);font-size:.85rem;}
+    .progress-wrap{height:10px;background:#eef2ff;border-radius:999px;overflow:hidden;border:1px solid rgba(99,102,241,.18);margin:10px 0 12px;}
+    .progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),#a5b4fc);width:0%;}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:12px;padding:10px 14px;font-weight:800;font-size:.9rem;cursor:pointer;}
+    .btn-primary{background:var(--primary);color:#fff;}
+    .btn-primary:hover{background:var(--primary-dark);}
+    .btn-ghost{background:#eef2ff;color:var(--text);border:1px solid rgba(99,102,241,.18);}
+    .btn-ghost:hover{background:#e0e7ff;}
+    .btn-disabled{background:#f1f5f9;color:#94a3b8;border:1px solid var(--border);cursor:not-allowed;}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-size:.8rem;font-weight:700;}
+    .pill-ok{background:rgba(16,185,129,.12);color:#047857;}
+    .pill-no{background:rgba(239,68,68,.12);color:#b91c1c;}
+    .table{width:100%;border-collapse:collapse;}
+    .table th,.table td{padding:12px 10px;border-bottom:1px solid var(--border);text-align:left;font-size:.92rem;}
+    .table th{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .searchbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 6px;}
+    .input,.select{padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;min-width:220px;font-weight:600;}
+    .lesson-title{font-weight:800;}
+    .lesson-reader h2{font-size:1.4rem;font-weight:900;letter-spacing:-.02em;margin-bottom:10px;}
+    .lesson-reader p{color:var(--muted);line-height:1.65;font-size:1.02rem;}
+    .video{margin:16px 0 14px;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:#0b1220;}
+    .video iframe{width:100%;height:360px;border:0;display:block;}
+    .audio{margin:12px 0 8px;padding:12px;border:1px solid var(--border);border-radius:14px;background:#fff;}
+    .audio label{display:block;font-weight:900;margin-bottom:8px;}
+    .tts-btn{padding:8px 12px;border-radius:12px;border:1px solid rgba(99,102,241,.18);background:#eef2ff;font-weight:900;cursor:pointer;}
+    .tts-btn:hover{background:#e0e7ff;}
+    .qblock{border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0;background:#fff;}
+    .qtitle{font-weight:900;margin-bottom:10px;}
+    .opt{display:block;margin:8px 0;color:var(--text);font-weight:600;}
+    .opt input{margin-right:8px;}
+    @media(max-width:980px){
+      body{display:block;}
+      .sidebar{position:relative;width:100%;height:auto;}
+      .main{padding:18px;}
+      .video iframe{height:220px;}
+    }
+  </style>
+</head>
+<body>
+
+  {# `my_courses` rows are tuples from sqlite. Extract the first column safely for membership checks. #}
+  {% set enrolled_ids = my_courses | map('first') | list %}
+
+  <aside class="sidebar">
+    <div class="brand">JovilRapidLearn</div>
+    <nav class="nav">
+      <a href="/courses" class="{{ 'active' if not view else '' }}">Dashboard</a>
+      <a href="/courses?view=mycourses" class="{{ 'active' if view == 'mycourses' else '' }}">My Courses</a>
+      <a href="/courses?view=lessons" class="{{ 'active' if view == 'lessons' else '' }}">Lessons</a>
+      <a href="/courses?view=certificates" class="{{ 'active' if view == 'certificates' else '' }}">Certificates</a>
+      <a href="/logout">Logout</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    {% if not view %}
+      <div class="topbar">
+        <div>
+          <h1>Dashboard</h1>
+          <div class="sub">Welcome back, {{ session['user_name'] }}. Enroll, learn, track progress, and unlock certificates.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="justify-content:space-between;">
+          <div class="meta"><strong>{{ courses|length }}</strong> total courses · <strong>{{ my_courses|length }}</strong> enrolled</div>
+          <a class="btn btn-ghost" href="/courses?view=mycourses">Go to My Courses</a>
+        </div>
+      </div>
+
+      <div class="grid">
+        {% for c in courses %}
+          {% set pid = c[0] | string %}
+          {% set p = course_progress.get(pid, {'total': 0, 'completed': 0}) %}
+          {% set percent = ( (p.completed * 100) // p.total ) if p.total else 0 %}
+          <div class="course-card">
+            <span class="badge">Course</span>
+            <h3>{{ c[1] }}</h3>
+            <p>{{ c[2] }}</p>
+            <div class="meta">{{ lesson_counts.get(pid, 0) }} lessons · {{ percent }}% completed</div>
+            <div class="progress-wrap"><div class="progress-bar" data-progress="{{ percent }}"></div></div>
+            <div class="row">
+              {% if c[0] in enrolled_ids %}
+                <a class="btn btn-primary" href="/courses?view=lesson&id={{ c[0] }}">Continue</a>
+              {% else %}
+                <form method="post" action="/enroll/{{ c[0] }}">
+                  <button class="btn btn-primary" type="submit">Enroll</button>
+                </form>
+              {% endif %}
+              <a class="btn btn-ghost" href="/courses?view=lesson&id={{ c[0] }}">View lessons</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if view == 'mycourses' %}
+      <div class="topbar">
+        <div>
+          <h1>My Courses</h1>
+          <div class="sub">Only the courses you enrolled in.</div>
+        </div>
+      </div>
+
+      {% if my_courses|length == 0 %}
+        <div class="card">
+          <h2 style="font-size:1.1rem;font-weight:900;margin-bottom:8px;">No enrollments yet</h2>
+          <p class="sub" style="margin-top:0;">Go to Dashboard and click <strong>Enroll</strong> on a course to start learning.</p>
+          <div style="margin-top:14px;"><a class="btn btn-primary" href="/courses">Browse courses</a></div>
+        </div>
+      {% else %}
+        <div class="grid">
+          {% for c in my_courses %}
+            {% set pid = c[0] | string %}
+            {% set p = course_progress.get(pid, {'total': 0, 'completed': 0}) %}
+            {% set percent = ( (p.completed * 100) // p.total ) if p.total else 0 %}
+            <div class="course-card">
+              <span class="badge">Enrolled</span>
+              <h3>{{ c[1] }}</h3>
+              <p>{{ c[2] }}</p>
+              <div class="meta">{{ lesson_counts.get(pid, 0) }} lessons · {{ percent }}% completed</div>
+              <div class="progress-wrap"><div class="progress-bar" data-progress="{{ percent }}"></div></div>
+              <div class="row">
+                <a class="btn btn-primary" href="/courses?view=lesson&id={{ c[0] }}">Continue learning</a>
+                {% if pid in eligible_cert_course_ids %}
+                  <a class="btn btn-ghost" href="/certificate/{{ c[0] }}">Download certificate (PDF)</a>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endif %}
+
+    {% if view == 'lesson' and current_course %}
+      <div class="topbar">
+        <div>
+          <h1>{{ current_course[1] }}</h1>
+          <div class="sub">{{ current_course[2] }}</div>
+        </div>
+        <a class="btn btn-ghost" href="/courses">Back to Dashboard</a>
+      </div>
+
+      {% if current_course[0] not in enrolled_ids %}
+        <div class="card">
+          <div class="row" style="justify-content:space-between;">
+            <div>
+              <h2 style="font-size:1.1rem;font-weight:900;margin-bottom:6px;">You’re not enrolled yet</h2>
+              <div class="sub" style="margin-top:0;">Enroll to track progress and unlock your certificate.</div>
+            </div>
+            <form method="post" action="/enroll/{{ current_course[0] }}">
+              <button class="btn btn-primary" type="submit">Enroll now</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="card">
+        <h2 style="font-size:1.05rem;font-weight:900;margin-bottom:12px;">Lessons</h2>
+        <table class="table">
+          <thead>
+            <tr><th>Lesson</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            {% for l in lessons %}
+              {% set done = (l[0] | string) in completed_lessons %}
+              <tr>
+                <td class="lesson-title">{{ l[2] }}</td>
+                <td>
+                  {% if done %}<span class="pill pill-ok">Completed</span>{% else %}<span class="pill pill-no">Not completed</span>{% endif %}
+                </td>
+                <td style="text-align:right;">
+                  <a class="btn btn-ghost" href="/courses?view=lesson_content&id={{ l[0] }}">Open</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% set pid = current_course[0] | string %}
+      {% set p = course_progress.get(pid, {'total': 0, 'completed': 0}) %}
+      {% set is_course_completed = (p.total > 0 and p.completed >= p.total) %}
+      <div class="card">
+        <div class="row" style="justify-content:space-between;">
+          <div>
+            <h2 style="font-size:1.05rem;font-weight:900;margin-bottom:6px;">Final Quiz</h2>
+            <div class="sub" style="margin-top:0;">
+              Complete all lessons, then take the final quiz to unlock your certificate. Pass mark: {{ pass_percent }}%.
+            </div>
+            {% if assessments.get(pid) %}
+              <div class="meta" style="margin-top:10px;">
+                Last attempt: {{ assessments.get(pid).percentage }}% ({{ assessments.get(pid).score }}/{{ assessments.get(pid).total }})
+                · {% if assessments.get(pid).passed %}<span class="pill pill-ok">PASSED</span>{% else %}<span class="pill pill-no">FAILED</span>{% endif %}
+              </div>
+            {% endif %}
+          </div>
+          <div>
+            {% if is_course_completed %}
+              <a class="btn btn-primary" href="/courses?view=final_quiz&id={{ current_course[0] }}">Start Final Quiz</a>
+            {% else %}
+              <span class="btn btn-disabled">Complete all lessons first</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if view == 'lesson_content' and current_lesson and current_course %}
+      <div class="topbar">
+        <div>
+          <h1>Lesson</h1>
+          <div class="sub">{{ current_course[1] }}</div>
+        </div>
+        <a class="btn btn-ghost" href="/courses?view=lesson&id={{ current_course[0] }}">Back to Lessons</a>
+      </div>
+
+      {% set is_done = (current_lesson[0] | string) in completed_lessons %}
+      {% set next_id = None %}
+      {% if lesson_list %}
+        {% for l in lesson_list %}
+          {% if l[0] == current_lesson[0] and loop.index0 < (lesson_list|length - 1) %}
+            {% set next_id = lesson_list[loop.index0 + 1][0] %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      <div class="card lesson-reader" id="lessonReader">
+        <div class="row" style="justify-content:space-between;align-items:flex-start;">
+          <div>
+            <h2>{{ current_lesson[2] }}</h2>
+            <p>{{ current_lesson[3] }}</p>
+          </div>
+          {% if is_done %}
+            <span class="pill pill-ok">Completed</span>
+          {% else %}
+            <span class="pill pill-no">In progress</span>
+          {% endif %}
+        </div>
+
+        {% if video_embed_url %}
+          <div class="video">
+            <iframe
+              src="{{ video_embed_url }}"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+              title="Lesson video"
+              referrerpolicy="strict-origin-when-cross-origin"
+            ></iframe>
+          </div>
+        {% endif %}
+
+        <div class="audio">
+          <label>Audio (Read aloud)</label>
+          <div class="row">
+            <button type="button" class="tts-btn" id="ttsPlay">Play</button>
+            <button type="button" class="tts-btn" id="ttsPause">Pause</button>
+            <button type="button" class="tts-btn" id="ttsStop">Stop</button>
+            <span class="meta" id="ttsHint">Uses your browser voice.</span>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;" class="row">
+          {% if not is_done %}
+            <span class="pill pill-no" id="autoStatus">In progress</span>
+            <span class="meta" id="completeHint">Scroll to the bottom to auto-complete this lesson.</span>
+          {% else %}
+            <span class="pill pill-ok">Completed</span>
+            <span class="meta">Lesson completed automatically.</span>
+          {% endif %}
+          <a class="btn btn-ghost" href="/courses?view=quiz&id={{ current_lesson[0] }}">Take quiz</a>
+          {% if next_id %}
+            <a class="btn btn-primary" href="/courses?view=lesson_content&id={{ next_id }}">Next lesson →</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <script type="application/json" id="alreadyDone">{{ is_done | tojson }}</script>
+      <script type="application/json" id="rawText">{{ (current_lesson[2] ~ ". " ~ current_lesson[3]) | tojson }}</script>
+
+      <script>
+        (function() {
+          const hint = document.getElementById('completeHint');
+          const status = document.getElementById('autoStatus');
+          if (!hint) return;
+
+          // Auto-complete lesson when user reaches bottom.
+          const alreadyDoneEl = document.getElementById('alreadyDone');
+          const alreadyDone = alreadyDoneEl ? JSON.parse(alreadyDoneEl.textContent) : false;
+          if (!alreadyDone) {
+            let sent = false;
+            const atBottom = () => (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 40);
+            const tick = async () => {
+              if (sent) return;
+              if (atBottom()) {
+                sent = true;
+                hint.textContent = "Completing lesson...";
+                try {
+                  await fetch("/complete_lesson/{{ current_lesson[0] }}", { method: "POST" });
+                  if (status) status.className = "pill pill-ok";
+                  if (status) status.textContent = "Completed";
+                  hint.textContent = "Lesson completed. You can go to the next lesson.";
+                } catch (e) {
+                  sent = false;
+                  hint.textContent = "Could not auto-complete. Please refresh and try again.";
+                }
+              }
+            };
+            window.addEventListener('scroll', tick, { passive: true });
+            tick();
+          }
+
+          // Text-to-speech (audio)
+          // Some lesson content includes HTML tags like <h1>/<img>. Strip them
+          // so speech synthesis doesn't get confused or throw errors.
+          const rawTextEl = document.getElementById('rawText');
+          const rawText = rawTextEl ? JSON.parse(rawTextEl.textContent) : '';
+          const text = String(rawText || "")
+            .replace(new RegExp("<[^>]*>", "g"), " ")
+            .replace(/\s+/g, " ")
+            .trim();
+          const playBtn = document.getElementById("ttsPlay");
+          const pauseBtn = document.getElementById("ttsPause");
+          const stopBtn = document.getElementById("ttsStop");
+          const ttsHint = document.getElementById("ttsHint");
+          if (playBtn && pauseBtn && stopBtn && window.speechSynthesis) {
+            // Reset any previous utterances when the page is loaded.
+            try { window.speechSynthesis.cancel(); } catch (e) {}
+            let utter = null;
+            playBtn.addEventListener("click", () => {
+              if (window.speechSynthesis.speaking && window.speechSynthesis.paused) {
+                window.speechSynthesis.resume();
+                return;
+              }
+              window.speechSynthesis.cancel();
+              try {
+                utter = new SpeechSynthesisUtterance(text);
+                utter.rate = 1;
+                utter.pitch = 1;
+                utter.onend = () => { if (ttsHint) ttsHint.textContent = "Finished."; };
+                if (ttsHint) ttsHint.textContent = "Playing...";
+                window.speechSynthesis.speak(utter);
+              } catch (e) {
+                if (ttsHint) ttsHint.textContent = "Could not play voice. Try again.";
+              }
+            });
+            pauseBtn.addEventListener("click", () => {
+              if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.pause();
+                if (ttsHint) ttsHint.textContent = "Paused.";
+              }
+            });
+            stopBtn.addEventListener("click", () => {
+              window.speechSynthesis.cancel();
+              if (ttsHint) ttsHint.textContent = "Stopped.";
+            });
+          } else if (ttsHint) {
+            ttsHint.textContent = "Text-to-speech not supported in this browser.";
+          }
+        })();
+      </script>
+    {% endif %}
+
+    {% if view == 'lessons' %}
+      <div class="topbar">
+        <div>
+          <h1>All Lessons</h1>
+          <div class="sub">Search and filter across all courses. Completed lessons are marked.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <form class="searchbar" method="get" action="/courses">
+          <input type="hidden" name="view" value="lessons" />
+          <input class="input" type="text" name="q" placeholder="Search lessons or courses..." value="{{ request.args.get('q','') }}" />
+          <select class="select" name="course">
+            <option value="">All courses</option>
+            {% for c in courses %}
+              <option value="{{ c[0] }}" {% if request.args.get('course','') == (c[0]|string) %}selected{% endif %}>{{ c[1] }}</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-primary" type="submit">Search</button>
+          <a class="btn btn-ghost" href="/courses?view=lessons">Reset</a>
+        </form>
+
+        <table class="table" style="margin-top:8px;">
+          <thead>
+            <tr><th>Course</th><th>Lesson</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            {% for r in all_lessons or [] %}
+              {% set lesson_id = r[0] %}
+              {% set done = (lesson_id | string) in completed_lessons %}
+              <tr>
+                <td>{{ r[5] }}</td>
+                <td class="lesson-title">{{ r[2] }}</td>
+                <td>{% if done %}<span class="pill pill-ok">Completed</span>{% else %}<span class="pill pill-no">Not completed</span>{% endif %}</td>
+                <td style="text-align:right;">
+                  <a class="btn btn-ghost" href="/courses?view=lesson_content&id={{ lesson_id }}">Open</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    {% if view == 'quiz' and quiz %}
+      <div class="topbar">
+        <div>
+          <h1>Quiz</h1>
+          <div class="sub">Answer and submit to check your understanding.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        {% if request.args.get('result') %}
+          <div class="pill pill-ok" style="display:inline-flex;margin-bottom:12px;">{{ request.args.get('result') }}</div>
+        {% endif %}
+        <h2 style="font-size:1.1rem;font-weight:900;margin-bottom:10px;">{{ quiz.lesson_title }}</h2>
+        <form method="post" action="/submit_quiz">
+          <input type="hidden" name="lesson_id" value="{{ quiz.lesson_id }}">
+          {% if quiz_questions and quiz_questions|length > 0 %}
+            {% for q in quiz_questions %}
+              <div class="qblock">
+                <div class="qtitle">Q{{ loop.index }}. {{ q[2] }}</div>
+                <label class="opt"><input type="radio" name="q_{{ q[0] }}" value="{{ q[3] }}" required> {{ q[3] }}</label>
+                <label class="opt"><input type="radio" name="q_{{ q[0] }}" value="{{ q[4] }}"> {{ q[4] }}</label>
+                <label class="opt"><input type="radio" name="q_{{ q[0] }}" value="{{ q[5] }}"> {{ q[5] }}</label>
+                <label class="opt"><input type="radio" name="q_{{ q[0] }}" value="{{ q[6] }}"> {{ q[6] }}</label>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="sub" style="margin-top:0;">No quiz questions for this lesson yet.</div>
+          {% endif %}
+          <div class="row" style="margin-top:14px;">
+            <button class="btn btn-primary" type="submit">Submit</button>
+            {% if quiz_course_id %}<a class="btn btn-ghost" href="/courses?view=lesson&id={{ quiz_course_id }}">Back to lessons</a>{% endif %}
+            {% if request.args.get('result') and next_lesson_id %}
+              <a class="btn btn-primary" id="nextBtn" href="/courses?view=lesson_content&id={{ next_lesson_id }}">Next lesson →</a>
+              <span class="meta" id="nextHint">Auto moving to next lesson in <b id="countdown">5</b>s…</span>
+              <script>
+                (function(){
+                  let s = 5;
+                  const cd = document.getElementById('countdown');
+                  const go = () => window.location.href = "/courses?view=lesson_content&id={{ next_lesson_id }}";
+                  const t = setInterval(() => {
+                    s -= 1;
+                    if (cd) cd.textContent = String(s);
+                    if (s <= 0) { clearInterval(t); go(); }
+                  }, 1000);
+                })();
+              </script>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    {% endif %}
+
+    {% if view == 'certificates' %}
+      <div class="topbar">
+        <div>
+          <h1>Certificates</h1>
+          <div class="sub">Certificates unlock only after 100% course completion.</div>
+        </div>
+      </div>
+
+      {% if my_courses|length == 0 %}
+        <div class="card">
+          <h2 style="font-size:1.1rem;font-weight:900;margin-bottom:6px;">No enrolled courses</h2>
+          <div class="sub" style="margin-top:0;">Enroll in a course to start tracking progress and unlock a certificate.</div>
+          <div style="margin-top:14px;"><a class="btn btn-primary" href="/courses">Browse courses</a></div>
+        </div>
+      {% else %}
+        <div class="grid">
+          {% for c in my_courses %}
+            {% set pid = c[0] | string %}
+            {% set p = course_progress.get(pid, {'total': 0, 'completed': 0}) %}
+            {% set percent = ( (p.completed * 100) // p.total ) if p.total else 0 %}
+            {% set a = assessments.get(pid) %}
+            <div class="course-card">
+              <span class="badge">Certificate</span>
+              <h3>{{ c[1] }}</h3>
+              <p>{{ c[2] }}</p>
+              <div class="meta">{{ p.completed }}/{{ p.total }} lessons completed · {{ percent }}%</div>
+              <div class="progress-wrap"><div class="progress-bar" data-progress="{{ percent }}"></div></div>
+              {% if pid in eligible_cert_course_ids %}
+                <a class="btn btn-primary" href="/certificate/{{ c[0] }}">Download PDF Certificate</a>
+              {% else %}
+                {% if p.total > 0 and p.completed >= p.total and (not a or not a.passed) %}
+                  <span class="btn btn-disabled">Pass final quiz ({{ pass_percent }}%+) to unlock</span>
+                {% else %}
+                  <span class="btn btn-disabled">Complete all lessons to unlock</span>
+                {% endif %}
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endif %}
+
+    {% if view == 'final_quiz' and final_course %}
+      <div class="topbar">
+        <div>
+          <h1>Final Quiz</h1>
+          <div class="sub">{{ final_course[1] }} · Pass mark: {{ pass_percent }}%</div>
+        </div>
+        <a class="btn btn-ghost" href="/courses?view=lesson&id={{ final_course[0] }}">Back to Lessons</a>
+      </div>
+
+      <div class="card">
+        {% if final_result %}
+          {% set ok = 'PASSED' in final_result %}
+          <div class="pill {{ 'pill-ok' if ok else 'pill-no' }}" style="display:inline-flex;margin-bottom:12px;">{{ final_result }}</div>
+          {% if ok %}
+            <div class="meta" style="margin-bottom:10px;">Certificate is now unlocked for this course.</div>
+          {% endif %}
+        {% endif %}
+
+        {% if final_questions and final_questions|length > 0 %}
+          <form method="post" action="/submit_final_quiz/{{ final_course[0] }}">
+            {% for q in final_questions %}
+              <div class="qblock">
+                <div class="qtitle">Q{{ loop.index }}. {{ q[3] }}</div>
+                <label class="opt"><input type="radio" name="q_{{ q[0] }}" value="{{ q[4] }}" required> {{ q[4] }}</label>
+                <label class="opt"><input type="radio" name="q_{{ q[0] }}" value="{{ q[5] }}"> {{ q[5] }}</label>
+                <label class="opt"><input type="radio" name="q_{{ q[0] }}" value="{{ q[6] }}"> {{ q[6] }}</label>
+                <label class="opt"><input type="radio" name="q_{{ q[0] }}" value="{{ q[7] }}"> {{ q[7] }}</label>
+              </div>
+            {% endfor %}
+            <div class="row" style="margin-top:14px;">
+              <button class="btn btn-primary" type="submit">Submit Final Quiz</button>
+              <a class="btn btn-ghost" href="/courses?view=mycourses">My Courses</a>
+            </div>
+          </form>
+        {% else %}
+          <div class="sub" style="margin-top:0;">No final quiz questions found for this course yet.</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </main>
+
+  <script>
+    (function () {
+      const bars = document.querySelectorAll('.progress-bar[data-progress]');
+      bars.forEach((bar) => {
+        const v = Number(bar.getAttribute('data-progress') || '0');
+        const pct = Math.max(0, Math.min(100, isFinite(v) ? v : 0));
+        bar.style.width = pct + '%';
+      });
+    })();
+  </script>
+</body>
+</html>
